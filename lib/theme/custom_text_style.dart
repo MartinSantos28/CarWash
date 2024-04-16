@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:carwash/theme/theme_helper.dart';
+import 'package:flutter/material.dart';
 
 /// A collection of pre-defined text styles for customizing text appearance,
 /// categorized by different font families and weights.
@@ -10,7 +10,7 @@ class CustomTextStyles {
   static get headlineLargeKufamOrange400d1 =>
       theme.textTheme.headlineLarge!.kufam.copyWith(
         color: appTheme.orange400D1,
-        fontWeight: FontWeight.w400,
+        fontWeight: FontWeight.w200,
       );
   static get headlineLargeSemiBold => theme.textTheme.headlineLarge!.copyWith(
         fontWeight: FontWeight.w600,

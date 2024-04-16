@@ -1,21 +1,20 @@
 import 'package:carwash/core/app_export.dart';
+import 'package:carwash/models/createUser_model.dart';
+import 'package:carwash/services/create_user_service.dart';
 import 'package:carwash/widgets/custom_elevated_button.dart';
 import 'package:carwash/widgets/custom_text_form_field.dart';
 import 'package:flutter/material.dart';
 
+
+// ignore: must_be_immutable
 class RegistroScreen extends StatelessWidget {
-  RegistroScreen({Key? key})
-      : super(
-          key: key,
-        );
+  RegistroScreen({Key? key}) : super(key: key);
 
-  TextEditingController editTextController = TextEditingController();
-
-  TextEditingController editTextController1 = TextEditingController();
-
-  TextEditingController editTextController2 = TextEditingController();
-
-  TextEditingController editTextController3 = TextEditingController();
+  TextEditingController nombreController = TextEditingController();
+  TextEditingController apellidoController = TextEditingController();
+  TextEditingController correoController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController repetirPasswordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -41,30 +40,36 @@ class RegistroScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Spacer(
-
-                      ),
+                      Spacer(),
                       Padding(
                         padding: EdgeInsets.only(left: 5.h),
-
                         child: Text(
-                          "Nombre completo:",
-                          style: theme.textTheme.labelLarge,
-                        ),
-                      
-                      ),SizedBox(height: 3.v),
-                      _buildEditText(context),
-                      SizedBox(height: 41.v),
-                      Padding(
-                        padding: EdgeInsets.only(left: 5.h),
-                        
-                        child: Text(
-                          "Correo electronico:",
+                          "Nombre :",
                           style: theme.textTheme.labelLarge,
                         ),
                       ),
                       SizedBox(height: 3.v),
-                      _buildEditText(context),
+                      CustomTextFormField(controller: nombreController),
+                      Spacer(),
+                      Padding(
+                        padding: EdgeInsets.only(left: 5.h),
+                        child : Text (
+                          "Apellidos: ",
+                          style: theme.textTheme.labelLarge,
+                        )
+                      ),
+                      SizedBox(height: 3.v),
+                      CustomTextFormField(controller: apellidoController),
+                      SizedBox(height: 41.v),
+                      Padding(
+                        padding: EdgeInsets.only(left: 5.h),
+                        child: Text(
+                          "Correo electrónico:",
+                          style: theme.textTheme.labelLarge,
+                        ),
+                      ),
+                      SizedBox(height: 3.v),
+                      CustomTextFormField(controller: correoController),
                       SizedBox(height: 41.v),
                       Padding(
                         padding: EdgeInsets.only(left: 5.h),
@@ -74,19 +79,18 @@ class RegistroScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 2.v),
-                      _buildEditText1(context),
+                      CustomTextFormField(controller: passwordController),
                       SizedBox(height: 42.v),
                       Padding(
                         padding: EdgeInsets.only(left: 5.h),
                         child: Text(
-                          "Repite contraseña:",
+                          "Repetir contraseña:",
                           style: theme.textTheme.labelLarge,
                         ),
                       ),
                       SizedBox(height: 1.v),
-                      _buildEditText2(context),
+                      CustomTextFormField(controller: repetirPasswordController),
                       SizedBox(height: 3.v),
-
                       SizedBox(height: 72.v),
                       _buildRegistrate(context),
                     ],
@@ -101,45 +105,78 @@ class RegistroScreen extends StatelessWidget {
     );
   }
 
-  /// Section Widget
-  Widget _buildEditText(BuildContext context) {
-    return CustomTextFormField(
-      controller: editTextController,
-    );
-  }
-
-  /// Section Widget
-  Widget _buildEditText1(BuildContext context) {
-    return CustomTextFormField(
-      controller: editTextController1,
-    );
-  }
-
-  /// Section Widget
-  Widget _buildEditText2(BuildContext context) {
-    return CustomTextFormField(
-      controller: editTextController2,
-    );
-  }
-
-  /// Section Widget
   Widget _buildRegistrate(BuildContext context) {
     return CustomElevatedButton(
       width: 133.h,
-      text: "Registrate",
+      text: "Regístrate",
       alignment: Alignment.center,
+      onPressed: () async {
+        // Obtener los datos ingresados por el usuario
+        String name = nombreController.text;
+        String last_name = apellidoController.text;
+        String email = correoController.text;
+        String password = passwordController.text;
+        String repetirPassword = repetirPasswordController.text;
+
+        // Verificar si las contraseñas coinciden
+        if (password != repetirPassword) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("Error"),
+                content: Text("Las contraseñas no coinciden."),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text("OK"),
+                  ),
+                ],
+              );
+            },
+          );
+          return;
+        }
+
+        // Crear un nuevo usuario
+        try {
+          User newUser = await UserService.createUser(name,last_name, email, password);
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("Éxito"),
+                content: Text("Usuario registrado correctamente: ${newUser.last_name}"),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text("OK"),
+                  ),
+                ],
+              );
+            },
+          );
+        } catch (error) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("Error"),
+                content: Text("Error al registrar usuario: $error"),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text("OK"),
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      },
     );
   }
 
-  /// Section Widget
-  Widget _buildEditText3(BuildContext context) {
-    return CustomTextFormField(
-      controller: editTextController3,
-      textInputAction: TextInputAction.done,
-    );
-  }
-
-  /// Section Widget
   Widget _buildSeven(BuildContext context) {
     return Align(
       alignment: Alignment.topCenter,
@@ -171,9 +208,7 @@ class RegistroScreen extends StatelessWidget {
                       "Regístrate",
                       style: theme.textTheme.headlineLarge,
                     ),
-                    SizedBox(height: 172.v),
-                    
-                    
+                    SizedBox(height: 250.v),
                   ],
                 ),
               ),

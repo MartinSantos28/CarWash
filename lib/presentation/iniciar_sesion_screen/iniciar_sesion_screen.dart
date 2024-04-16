@@ -1,18 +1,16 @@
+import 'package:carwash/services/auth-user_service.dart';
+import 'package:flutter/material.dart';
 import 'package:carwash/core/app_export.dart';
 import 'package:carwash/presentation/main_screen/main_screen.dart';
+
 import 'package:carwash/widgets/custom_elevated_button.dart';
 import 'package:carwash/widgets/custom_text_form_field.dart';
-import 'package:flutter/material.dart';
 
 class IniciarSesionScreen extends StatelessWidget {
-  IniciarSesionScreen({Key? key})
-      : super(
-          key: key,
-        );
+  IniciarSesionScreen({Key? key}) : super(key: key);
 
-  TextEditingController editTextController = TextEditingController();
-
-  TextEditingController editTextController1 = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -38,50 +36,50 @@ class IniciarSesionScreen extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Spacer(
-                        flex: 60,
-                      ),
+                      Spacer(flex: 60),
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Padding(
                           padding: EdgeInsets.only(left: 5.h),
                           child: Text(
-                            "Correo electronico:",
+                            "Nombre de usuario:",
                             style: theme.textTheme.labelLarge,
                           ),
                         ),
                       ),
                       SizedBox(height: 3.v),
                       CustomTextFormField(
-                        controller: editTextController,
+                        controller: usernameController,
                       ),
                       SizedBox(height: 59.v),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 5.h),
+                          child: Text(
+                            "Contraseña:",
+                            style: theme.textTheme.labelLarge,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 3.v),
                       CustomTextFormField(
-                        controller: editTextController1,
+                        controller: passwordController,
                         textInputAction: TextInputAction.done,
                       ),
-                      Spacer(
-                        flex: 39,
-                      ),
+                      Spacer(flex: 39),
                       CustomElevatedButton(
                         onPressed: () {
-                          print('Hola');
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => MainScreen()),
-                          );
+                          _login(context);
                         },
                         width: 133.h,
-                        text: "Iniciar sesion",
+                        text: "Iniciar sesión",
                         buttonStyle: CustomButtonStyles.fillOrangeA,
                       ),
                     ],
                   ),
                 ),
               ),
-              _buildFour(context),
-              _buildSix(context),
             ],
           ),
         ),
@@ -89,81 +87,35 @@ class IniciarSesionScreen extends StatelessWidget {
     );
   }
 
-  /// Section Widget
-  Widget _buildFour(BuildContext context) {
-    return Align(
-      alignment: Alignment.topCenter,
-      child: SizedBox(
-        height: 355.v,
-        width: double.maxFinite,
-        child: Stack(
-          alignment: Alignment.topLeft,
-          children: [
-            CustomImageView(
-              imagePath: ImageConstant.imgImage2,
-              height: 355.v,
-              width: 390.h,
-              alignment: Alignment.center,
-            ),
-            Align(
-              alignment: Alignment.topLeft,
-              child: Padding(
-                padding: EdgeInsets.only(
-                  left: 12.h,
-                  top: 69.v,
-                ),
-                child: Text(
-                  "Iniciar sesión",
-                  style: theme.textTheme.headlineLarge,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+  void _login(BuildContext context) async {
+    AuthService authService = AuthService();
+    bool success = await authService.loginUser(
+      usernameController.text,
+      passwordController.text,
     );
-  }
 
-  /// Section Widget
-  Widget _buildSix(BuildContext context) {
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: Container(
-        height: 348.v,
-        width: double.maxFinite,
-        margin: EdgeInsets.only(bottom: 23.v),
-        child: Stack(
-          alignment: Alignment.topLeft,
-          children: [
-         /*   CustomImageView(
-              imagePath: ImageConstant.imgRectangle15,
-              height: 348.v,
-              width: 390.h,
-              alignment: Alignment.center,
-            ), */
-            Align(
-              alignment: Alignment.topLeft,
-              child: Padding(
-                padding: EdgeInsets.only(
-                  left: 30.h,
-                  right: 168.h,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Contraseña:",
-                      style: theme.textTheme.labelLarge,
-                    ),
-                    SizedBox(height: 44.v),
-                  ],
-                ),
-              ),
+    if (success) {
+      print('noooooo');
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => MainScreen()),
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error'),
+          content: Text('Inicio de sesión fallido.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Aceptar'),
             ),
           ],
         ),
-      ),
-    );
+      );
+    }
   }
 }

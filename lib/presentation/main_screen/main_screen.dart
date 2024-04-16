@@ -1,17 +1,14 @@
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:carwash/core/app_export.dart';
+import 'package:carwash/models/car_model.dart';
 import 'package:carwash/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:carwash/core/app_export.dart';
 
-import 'widgets/sixteen_item_widget.dart';
+// ignore: unused_import
+import 'package:carwash/services/car_service.dart'; // Asegúrate de importar el servicio de carros
 
 class MainScreen extends StatelessWidget {
-  MainScreen({Key? key})
-      : super(
-          key: key,
-        );
-
-  int sliderIndex = 1;
+  MainScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +32,7 @@ class MainScreen extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SizedBox(height: 42.v),
+                      SizedBox(height: 10.v),
                       CustomElevatedButton(
                         text: "Agendar cita",
                         buttonStyle: CustomButtonStyles.fillOrangeA,
@@ -53,7 +50,6 @@ class MainScreen extends StatelessWidget {
     );
   }
 
-  /// Section Widget
   Widget _buildThirteen(BuildContext context) {
     return Align(
       alignment: Alignment.topCenter,
@@ -97,8 +93,11 @@ class MainScreen extends StatelessWidget {
                             alignment: Alignment.centerRight,
                             child: Text(
                               "Martin",
-                              style: CustomTextStyles
-                                  .headlineLargeKufamOrange400d1,
+                              style: TextStyle(
+                                color: appTheme.orange400D1,
+                                fontSize: 15.fSize ,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ],
@@ -119,50 +118,68 @@ class MainScreen extends StatelessWidget {
     );
   }
 
-  /// Section Widget
   Widget _buildScrollHorizontal(BuildContext context) {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Padding(
-        padding: EdgeInsets.only(
-          left: 16.h,
-          bottom: 142.v,
-        ),
+        padding: EdgeInsets.only(left: 16, bottom: 140.h), // Asegúrate de que estos valores son correctos para tu layout.
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Destacado",
-              style: theme.textTheme.titleLarge,
-            ),
-            SizedBox(height: 5.v),
-            Padding(
-              padding: EdgeInsets.only(left: 100.h),
-              child: CarouselSlider.builder(
-                options: CarouselOptions(
-                  height: 200.v,
-                  initialPage: 0,
-                  autoPlay: true,
-                  viewportFraction: 1.0,
-                  enableInfiniteScroll: false,
-                  scrollDirection: Axis.horizontal,
-                  onPageChanged: (
-                    index,
-                    reason,
-                  ) {
-                    sliderIndex = index;
-                  },
-                ),
-                itemCount: 3,
-                itemBuilder: (context, index, realIndex) {
-                  return SixteenItemWidget();
-                },
-              ),
+            Text("Destacado", style: Theme.of(context).textTheme.titleLarge),
+            SizedBox(height: 5.h),
+            FutureBuilder<List<Car>>(
+              future: fetchCars(), // Asegúrate de que esta función devuelve una lista de carros.
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Text("Error: ${snapshot.error}");
+                } else if (snapshot.hasData) {
+                  return CarouselSlider.builder(
+                    options: CarouselOptions(
+                      height: 100.h, 
+                      initialPage: 0,
+                      autoPlay: true,
+                      viewportFraction: 0.8,
+                      enableInfiniteScroll: true,
+                      scrollDirection: Axis.horizontal,
+                    ),
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) {
+                      Car car = snapshot.data![itemIndex];
+                      return Builder(
+                        builder: (BuildContext context) {
+                          return Container(
+                            width: MediaQuery.of(context).size.width,
+                            margin: EdgeInsets.symmetric(horizontal: 5.h),
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  child: Image.network(
+                                    car.imageUrl,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                Text(car.brand + ' ' + car.model), // Muestra la marca y el modelo del carro
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  );
+                } else {
+                  return Center(child: Text('No hay datos disponibles.'));
+                }
+              },
             ),
           ],
         ),
       ),
     );
   }
+  
+  fetchCars() {}
 }

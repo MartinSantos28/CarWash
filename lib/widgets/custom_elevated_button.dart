@@ -30,24 +30,28 @@ class CustomElevatedButton extends BaseButton {
         );
 
   final BoxDecoration? decoration;
-
   final Widget? leftIcon;
-
   final Widget? rightIcon;
 
   @override
   Widget build(BuildContext context) {
+    // Utiliza MediaQuery para determinar el ancho disponible de la pantalla
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    // Calcula el ancho del botón en base al ancho de la pantalla
+    double buttonWidth = (screenWidth / 2) - 40; // 40 puede ser ajustado dependiendo del padding/margin deseado
+
     return alignment != null
         ? Align(
             alignment: alignment ?? Alignment.center,
-            child: buildElevatedButtonWidget,
+            child: buildElevatedButtonWidget(buttonWidth),
           )
-        : buildElevatedButtonWidget;
+        : buildElevatedButtonWidget(buttonWidth);
   }
 
-  Widget get buildElevatedButtonWidget => Container(
+  Widget buildElevatedButtonWidget(double buttonWidth) => Container(
         height: this.height ?? 38.v,
-        width: this.width ?? double.maxFinite,
+        width: this.width ?? buttonWidth,
         margin: margin,
         decoration: decoration,
         child: ElevatedButton(
@@ -57,12 +61,13 @@ class CustomElevatedButton extends BaseButton {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              leftIcon ?? const SizedBox.shrink(),
+              if (leftIcon != null) leftIcon!,
               Text(
                 text,
                 style: buttonTextStyle ?? CustomTextStyles.labelLargeIndigo400,
+                textAlign: TextAlign.center,
               ),
-              rightIcon ?? const SizedBox.shrink(),
+              if (rightIcon != null) rightIcon!,
             ],
           ),
         ),

@@ -42,4 +42,6 @@ class AuthService {
       return false; // Error al registrar al usuario
     }
   }
+
+  
 }

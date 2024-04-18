@@ -37,8 +37,8 @@ class InicioScreen extends StatelessWidget {
                           CustomElevatedButton(
                             onPressed: () {
                               Navigator.pushNamed(
-                                  context, '/iniciar_sesion_screen');
-                            },
+                                  context, '/main_screen');
+                            },  
                             text: "Iniciar sesion",
                             buttonStyle: CustomButtonStyles.fillOrangeD,
                             buttonTextStyle:

@@ -1,6 +1,6 @@
 import 'package:carwash/core/app_export.dart';
-import 'package:carwash/models/createUser_model.dart';
-import 'package:carwash/services/create_user_service.dart';
+import 'package:carwash/models/User_model.dart';
+import 'package:carwash/services/user_service.dart';
 import 'package:carwash/widgets/custom_elevated_button.dart';
 import 'package:carwash/widgets/custom_text_form_field.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +32,7 @@ class RegistroScreen extends StatelessWidget {
                 child: Container(
                   padding: EdgeInsets.symmetric(
                     horizontal: 25.h,
-                    vertical: 93.v,
+                    vertical: 100.v,
                   ),
                   decoration: AppDecoration.fillBlueA,
                   child: Column(
@@ -50,7 +50,7 @@ class RegistroScreen extends StatelessWidget {
                       ),
                       SizedBox(height: 3.v),
                       CustomTextFormField(controller: nombreController),
-                      Spacer(),
+                      SizedBox(height: 15.v,),
                       Padding(
                         padding: EdgeInsets.only(left: 5.h),
                         child : Text (
@@ -60,7 +60,7 @@ class RegistroScreen extends StatelessWidget {
                       ),
                       SizedBox(height: 3.v),
                       CustomTextFormField(controller: apellidoController),
-                      SizedBox(height: 41.v),
+                      SizedBox(height: 15.v),
                       Padding(
                         padding: EdgeInsets.only(left: 5.h),
                         child: Text(
@@ -70,7 +70,7 @@ class RegistroScreen extends StatelessWidget {
                       ),
                       SizedBox(height: 3.v),
                       CustomTextFormField(controller: correoController),
-                      SizedBox(height: 41.v),
+                      SizedBox(height: 15.v),
                       Padding(
                         padding: EdgeInsets.only(left: 5.h),
                         child: Text(
@@ -80,7 +80,7 @@ class RegistroScreen extends StatelessWidget {
                       ),
                       SizedBox(height: 2.v),
                       CustomTextFormField(controller: passwordController),
-                      SizedBox(height: 42.v),
+                      SizedBox(height: 15.v),
                       Padding(
                         padding: EdgeInsets.only(left: 5.h),
                         child: Text(
@@ -91,7 +91,7 @@ class RegistroScreen extends StatelessWidget {
                       SizedBox(height: 1.v),
                       CustomTextFormField(controller: repetirPasswordController),
                       SizedBox(height: 3.v),
-                      SizedBox(height: 72.v),
+                     SizedBox(height: 4.v,),
                       _buildRegistrate(context),
                     ],
                   ),
@@ -109,6 +109,7 @@ class RegistroScreen extends StatelessWidget {
     return CustomElevatedButton(
       width: 133.h,
       text: "Regístrate",
+      buttonStyle: CustomButtonStyles.fillOrangeA,
       alignment: Alignment.center,
       onPressed: () async {
         // Obtener los datos ingresados por el usuario
@@ -140,7 +141,7 @@ class RegistroScreen extends StatelessWidget {
 
         // Crear un nuevo usuario
         try {
-          User newUser = await UserService.createUser(name,last_name, email, password);
+          User newUser = await CreateUserServices.createUser(name,last_name, email, password);
           showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -149,7 +150,11 @@ class RegistroScreen extends StatelessWidget {
                 content: Text("Usuario registrado correctamente: ${newUser.last_name}"),
                 actions: [
                   TextButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.pushNamed(context, '/main_screen');
+                    },
+
                     child: Text("OK"),
                   ),
                 ],
@@ -165,7 +170,11 @@ class RegistroScreen extends StatelessWidget {
                 content: Text("Error al registrar usuario: $error"),
                 actions: [
                   TextButton(
-                    onPressed: () => Navigator.pop(context),
+                     onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.pushNamed(context, '/main_screen');
+                    },
+
                     child: Text("OK"),
                   ),
                 ],

@@ -20,7 +20,7 @@ class Car {
     );
   }
 
-  String get imageUrl => "" ;
+  
 
   get id => null;
 

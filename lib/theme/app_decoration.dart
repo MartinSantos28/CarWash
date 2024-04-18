@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:carwash/core/app_export.dart';
 
 class AppDecoration {
+  static var outlineWhiteA;
+
   // Fill decorations
   static BoxDecoration get fillBlueA => BoxDecoration(
         color: appTheme.blueA100,
@@ -15,6 +17,8 @@ class AppDecoration {
 }
 
 class BorderRadiusStyle {
+  static var circleBorder18;
+
   // Rounded borders
   static BorderRadius get roundedBorder8 => BorderRadius.circular(
         8.h,
